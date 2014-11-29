@@ -78,6 +78,7 @@ public class Setup {
 	public String check_schicht(String pause) {
 		String back = "";
 		String aktuellesdatum = zeit.df.format(zeit.ezeitminus[9]);
+		String vergleichdatum = zeit.df.format(new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11));
 		Date frühbeforezeit = null;
 		Date frühafterzeit = null;
 		Date spätbeforezeit = null;
@@ -85,6 +86,8 @@ public class Setup {
 		Date nachtbeforezeit = null;
 		Date nachtafterzeit = null;
 		Date vergleich = null ;
+		vergleich = new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11);
+		if(vergleichdatum.equals(aktuellesdatum)){
 		try {
 			frühbeforezeit = zeit.dtf.parse(aktuellesdatum+" 00:00:00");
 			frühafterzeit = zeit.dtf.parse(aktuellesdatum+" 12:30:00");
@@ -92,13 +95,29 @@ public class Setup {
 			spätafterzeit = zeit.dtf.parse(aktuellesdatum+" 21:00:00");
 			nachtbeforezeit = zeit.dtf.parse(aktuellesdatum+" 21:00:00");
 			nachtafterzeit = zeit.dtf.parse(aktuellesdatum+" 23:59:00");
-			vergleich = new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11);
+			
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		}
+		else
+		{
+			try {
+				frühbeforezeit = zeit.dtf.parse(vergleichdatum+" 00:00:00");
+				frühafterzeit = zeit.dtf.parse(vergleichdatum+" 12:30:00");
+				spätbeforezeit = zeit.dtf.parse(vergleichdatum+" 12:30:00");
+				spätafterzeit = zeit.dtf.parse(vergleichdatum+" 21:00:00");
+				nachtbeforezeit = zeit.dtf.parse(vergleichdatum+" 21:00:00");
+				nachtafterzeit = zeit.dtf.parse(vergleichdatum+" 23:59:00");
+				
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		switch(pause){
 		case FRÜHSTÜCK:
 			if (vergleich.after(frühbeforezeit) && vergleich.before(frühafterzeit)){
@@ -132,6 +151,7 @@ public class Setup {
 	public String check_schicht_pausenzeit(String pause) {
 		String back = "";
 		String aktuellesdatum = zeit.df.format(zeit.ezeitminus[9]);
+		String vergleichdatum = zeit.df.format(new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11));
 		Date frühbeforezeit = null;
 		Date frühafterzeit = null;
 		Date spätbeforezeit = null;
@@ -139,6 +159,8 @@ public class Setup {
 		Date nachtbeforezeit = null;
 		Date nachtafterzeit = null;
 		Date vergleich = null ;
+		vergleich = new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11);
+		if(vergleichdatum.equals(aktuellesdatum)){
 		try {
 			frühbeforezeit = zeit.dtf.parse(aktuellesdatum+" 00:00:00");
 			frühafterzeit = zeit.dtf.parse(aktuellesdatum+" 12:30:00");
@@ -146,13 +168,29 @@ public class Setup {
 			spätafterzeit = zeit.dtf.parse(aktuellesdatum+" 21:00:00");
 			nachtbeforezeit = zeit.dtf.parse(aktuellesdatum+" 21:00:00");
 			nachtafterzeit = zeit.dtf.parse(aktuellesdatum+" 23:59:00");
-			vergleich = new Date(zeit.ezeitminus[9].getTime() - 1000*60*60*11);
+			
 			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		}
+		else
+		{
+			try {
+				frühbeforezeit = zeit.dtf.parse(vergleichdatum+" 00:00:00");
+				frühafterzeit = zeit.dtf.parse(vergleichdatum+" 12:30:00");
+				spätbeforezeit = zeit.dtf.parse(vergleichdatum+" 12:30:00");
+				spätafterzeit = zeit.dtf.parse(vergleichdatum+" 21:00:00");
+				nachtbeforezeit = zeit.dtf.parse(vergleichdatum+" 21:00:00");
+				nachtafterzeit = zeit.dtf.parse(vergleichdatum+" 23:59:00");
+				
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		switch(pause){
 		case FRÜHSTÜCK:
 			if (vergleich.after(frühbeforezeit) && vergleich.before(frühafterzeit)){

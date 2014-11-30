@@ -1,11 +1,19 @@
 package freakrware.zeitverletzung.core;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Image;
 import java.awt.TextField;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -26,6 +36,10 @@ import javax.swing.WindowConstants;
 import freakrware.privat.standards.java.core.Standards_interface_java;
 
 public class ZeitService implements Standards_interface_java{
+	
+		final static Image IMAGE_BLOGO = Toolkit.getDefaultToolkit().getImage(Zeit.class.getResource("/bosch.gif"));
+		final static Image IMAGE_BANKER = Toolkit.getDefaultToolkit().getImage(Zeit.class.getResource("/anker.gif"));
+		final static Image IMAGE_BPLANT = Toolkit.getDefaultToolkit().getImage(Zeit.class.getResource("/standortbuehl.gif"));
 	
 		public int M3 = 0;
 		public Date ezeit;
@@ -45,6 +59,7 @@ public class ZeitService implements Standards_interface_java{
 		Setup setup = new Setup(this);
 		SysTray st = new SysTray(this);
 		public String is = setup.get_setup(Setup.VERTRAG);
+		private String checkedintime;
 		
 	public void Zeitstart(String[] args) {
 		
@@ -81,7 +96,7 @@ public class ZeitService implements Standards_interface_java{
 			            @Override
 			            public void run() {
 			                
-			                showdialog("--** "+text+" Stunden Arbeitszeit erreicht! **--");
+			                showdialog(text);
 			            }
 			        });
 	        	dialoganzeige.start();
@@ -123,7 +138,7 @@ public class ZeitService implements Standards_interface_java{
 				ezeitminus[x].setTime(tzeit.getTime());
 			}
 		}
-		
+		checkedintime = tf.format(new Date(new Date().getTime()-(new Date().getTime()-ezeitminus[0].getTime()+(1000*60*60))));
 		//Date tzeit = new Date(ezeit.getTime()+(1000*60*(Integer.parseInt(pause_früh)+Integer.parseInt(pause_mittag))));
 		//ezeit.setTime(tzeit.getTime());
 	}
@@ -132,8 +147,18 @@ public class ZeitService implements Standards_interface_java{
 
 	public void showdialog(String text){
 				
+				String textt = text+" Stunden Arbeitszeit erreicht um";
 				DateFormat tf = new SimpleDateFormat("HH:mm:ss");
-				Date stdreachedtime = new Date(new Date().getTime()-(new Date().getTime()-ezeitminus[M3-1].getTime()));
+				Date stdreachedtime = new Date();
+				if(M3 == 0)
+				{
+					stdreachedtime = new Date(new Date().getTime()-(new Date().getTime()-ezeitminus[M3].getTime()+(1000*60*60)));
+				}
+				else
+				{
+					stdreachedtime = new Date(new Date().getTime()-(new Date().getTime()-ezeitminus[M3-1].getTime()));
+				}
+				
 				String sizex = setup.get_setup(Setup.WINDOW_SIZE_X);
 				String sizey = setup.get_setup(Setup.WINDOW_SIZE_Y);
 				
@@ -146,18 +171,38 @@ public class ZeitService implements Standards_interface_java{
 	    	    dialog.setLocation(400, 350);
 	    	    dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	    	    JLabel label = new JLabel("Text");
-	    	    label.setText(text + " : " + String.valueOf(tf.format(stdreachedtime)));
-	    	    dialog.add(label,BorderLayout.CENTER);
+	    	    label.setText(textt + " : " + String.valueOf(tf.format(stdreachedtime)));
+	    	    JLabel label2 = new JLabel("Text");
+	    	    label2.setText("Angestempelt um : "+ String.valueOf(checkedintime));
+	    	    
+	    	    JPanel ll1 = new JPanel();
+	    	    JPanel ll2 = new JPanel();
+	    	    JPanel ll3 = new JPanel();
+	    	    ll3.add(label2);
+	    	    ll2.add(label);
+//	    	    
+	    	    JLabel blogo = new JLabel(new ImageIcon(IMAGE_BLOGO));
+	    	    JLabel banker = new JLabel(new ImageIcon(IMAGE_BANKER));
+	    	    JLabel bplant = new JLabel(new ImageIcon(IMAGE_BPLANT));
+//	    	    
+//	    	    
+				ll1.add(blogo,BorderLayout.WEST);
+				ll1.add(bplant,BorderLayout.CENTER);
+	    	    ll1.add(banker,BorderLayout.EAST);
+	    	    dialog.add(ll1,BorderLayout.NORTH);
+	    	    dialog.add(ll2,BorderLayout.CENTER);
+	    	    dialog.add(ll3,BorderLayout.SOUTH);
 	    	    label.setHorizontalAlignment(JLabel.CENTER);
 	    	    label.setVerticalAlignment(JLabel.CENTER);
 	    	     
 	    	    int textsize = Integer.parseInt(sizex) / 27;
 	    	    float xtextsize = (float) textsize;
 				label.setFont(label.getFont().deriveFont(xtextsize));
-	    	    if(text.contains("--** 7 Stunden Arbeitszeit erreicht! **--") || text.contains("--** 8 Stunden Arbeitszeit erreicht! **--")){
+				label2.setFont(label2.getFont().deriveFont(xtextsize));
+	    	    if(textt.contains("7 Stunden Arbeitszeit erreicht") || textt.contains("8 Stunden Arbeitszeit erreicht")){
 	    	    	dialog.getContentPane().setBackground(Color.yellow);
 	    	    }
-	    	    if(text.contains("--** 9 Stunden Arbeitszeit erreicht! **--") || text.contains("--** 10 Stunden Arbeitszeit erreicht! **--")){
+	    	    if(textt.contains("9 Stunden Arbeitszeit erreicht") || textt.contains("10 Stunden Arbeitszeit erreicht")){
 	    	    	dialog.getContentPane().setBackground(Color.red);
 	    	    }
 	    	    dialog.requestFocus();

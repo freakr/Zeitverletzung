@@ -96,7 +96,7 @@ public class SysTray {
  			        	   }
  			        	   if(counter == 1)
  			        	   {
- 			        		   zeit.showdialog("--** "+String.valueOf(zeit.M3)+" Stunden Arbeitszeit erreicht! **--");
+ 			        		   zeit.showdialog(String.valueOf(zeit.M3));
  			        		   counter = 1;
  			        	   }
  			        	   if(counter == 2)
